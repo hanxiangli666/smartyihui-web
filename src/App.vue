@@ -257,11 +257,15 @@ async function handleLogin() {
   authError.value = ''
   authLoading.value = true
   try {
-    await axios.post(`${SSO_BASE}/auth/login`, loginForm.value)
-    authSuccess.value = '登录成功！'
-    setTimeout(() => { showLogin.value = false; authSuccess.value = '' }, 1200)
+    const res = await axios.post(`${SSO_BASE}/auth/login`, loginForm.value)
+    if (res.data.code === 200) {
+      authSuccess.value = '登录成功！'
+      setTimeout(() => { showLogin.value = false; authSuccess.value = '' }, 1200)
+    } else {
+      authError.value = res.data.msg || '登录失败，请检查账号密码'
+    }
   } catch (e) {
-    authError.value = e.response?.data?.message || '登录失败，请检查账号密码'
+    authError.value = e.response?.data?.msg || '登录失败，请检查账号密码'
   } finally {
     authLoading.value = false
   }
@@ -271,11 +275,15 @@ async function handleRegister() {
   authError.value = ''
   authLoading.value = true
   try {
-    await axios.post(`${SSO_BASE}/auth/register`, registerForm.value)
-    authSuccess.value = '注册成功！请登录'
-    authTab.value = 'login'
+    const res = await axios.post(`${SSO_BASE}/auth/register`, registerForm.value)
+    if (res.data.code === 200) {
+      authSuccess.value = '注册成功！请登录'
+      authTab.value = 'login'
+    } else {
+      authError.value = res.data.msg || '注册失败，请稍后重试'
+    }
   } catch (e) {
-    authError.value = e.response?.data?.message || '注册失败，请稍后重试'
+    authError.value = e.response?.data?.msg || '注册失败，请稍后重试'
   } finally {
     authLoading.value = false
   }
@@ -287,14 +295,22 @@ async function sendSms() {
     return
   }
   try {
-    await axios.post(`${SSO_BASE}/auth/send-code`, { phone: registerForm.value.phone })
-    smsCooldown.value = 60
-    const timer = setInterval(() => {
-      smsCooldown.value--
-      if (smsCooldown.value <= 0) clearInterval(timer)
-    }, 1000)
+    const res = await axios.post(
+      `${SSO_BASE}/auth/send/phone/verify-code/register`,
+      null,
+      { params: { phone: registerForm.value.phone } }
+    )
+    if (res.data.code === 200) {
+      smsCooldown.value = 60
+      const timer = setInterval(() => {
+        smsCooldown.value--
+        if (smsCooldown.value <= 0) clearInterval(timer)
+      }, 1000)
+    } else {
+      authError.value = res.data.msg || '发送失败'
+    }
   } catch (e) {
-    authError.value = e.response?.data?.message || '发送失败'
+    authError.value = e.response?.data?.msg || '发送失败，请稍后重试'
   }
 }
 </script>
