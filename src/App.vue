@@ -97,7 +97,7 @@
         <form v-if="authTab === 'login'" class="auth-form" @submit.prevent="handleLogin">
           <div class="field">
             <label>用户名</label>
-            <input v-model="loginForm.username" type="text" placeholder="请输入用户名" required />
+            <input v-model="loginForm.login" type="text" placeholder="请输入用户名" required />
           </div>
           <div class="field">
             <label>密码</label>
@@ -163,10 +163,10 @@ const scrollProgress = ref(0)
 const route = useRoute()
 let systemThemeMedia = null
 
-const loginForm = ref({ username: '', password: '' })
+const loginForm = ref({ login: '', password: '' })
 const registerForm = ref({ username: '', password: '', phone: '', verifyCode: '' })
 
-const SSO_BASE = 'https://www.smartyihui.com/api/sso'
+const SSO_BASE = '/api/sso'
 
 function handleScroll() {
   const doc = document.documentElement
@@ -296,9 +296,8 @@ async function sendSms() {
   }
   try {
     const res = await axios.post(
-      `${SSO_BASE}/auth/send/phone/verify-code/register`,
-      null,
-      { params: { phone: registerForm.value.phone } }
+    `${SSO_BASE}/auth/send/phone/verify-code/register`,
+    { phone: registerForm.value.phone }
     )
     if (res.data.code === 200) {
       smsCooldown.value = 60
