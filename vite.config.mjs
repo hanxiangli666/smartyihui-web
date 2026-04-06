@@ -4,6 +4,15 @@ import path from 'node:path'
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router'],
+        }
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), 'src'),
