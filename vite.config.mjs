@@ -23,7 +23,7 @@ export default defineConfig({
     port: 31098,
     proxy: {
     '/api/sso': {
-      target: 'https://www.smartyihui.com',
+      target: process.env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:8787',
       changeOrigin: true,
       onProxyReq(proxyReq) {
         console.log('Proxy to:', proxyReq.path)
