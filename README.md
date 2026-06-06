@@ -2,7 +2,7 @@
 
 Vue/Vite business website for Guangzhou Yihui Intelligent Technology. The site presents company services, self-developed products, contact information, and a polished login/register interaction flow.
 
-Live site: [www.smartyihui.com](https://www.smartyihui.com)
+Deployment is currently in private testing.
 
 ## What It Builds
 
